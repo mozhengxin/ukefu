@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="Generator" content="EditPlus®">
+        <meta name="Author" content="">
+        <meta name="Keywords" content="">
+        <meta name="Description" content="">
+		<script src="js/jquery-1.10.2.min.js"></script>
+        <title>优客服API Demo</title>
+		<script language="javascript">
+			var authorization ;
+			var demo =  {
+				login:function(username , password){
+					$.post("http://uk.ukewo.cn:880/tokens" , "username=admin&password=123456" , function(data){
+						authorization = data ;
+					}).error(function() { alert("error"); });
+				},
+				ajax:function(url , callback){
+					$.ajax({
+						type: "get",
+						url:url , 
+						success: function (data) {
+							console.log(data);
+						}
+					});
+
+				},
+				createWorkOrder:function(){
+					var param = 'title=测试API创建工单';
+					$.ajax({
+						type: "PUT",
+						url:"http://127.0.0.1/api/workorders" , 
+						data: param,
+						beforeSend: function(xhr) {
+							//headers:{"authorization":authorization},
+							 xhr.setRequestHeader("authorization", authorization);
+
+						 },
+						success: function (data) {
+							console.log(data);
+						}
+					});
+				},
+				createContacts:function(){
+					var param = 'name=张天翼';
+					$.ajax({
+						type: "PUT",
+						url:"http://127.0.0.1/api/contacts" , 
+						data: param,
+						success: function (data) {
+							console.log(data);
+						}
+					});
+				},
+				getUser:function(current){
+					demo.ajax("http://127.0.0.1/api/user?username="+current,function(data){
+						$("#temp").html(data);
+						console.log(data);
+						
+					});
+				},
+				qualityList:function(){
+					demo.ajax("http://127.0.0.1/api/quality",function(data){
+						console.log(data);
+					});
+				},
+				leavemsgList:function(){
+					demo.ajax("http://127.0.0.1/api/leavemsg",function(data){
+						console.log(data);
+					});
+				},
+				chatMsgList:function(){
+					demo.ajax("http://127.0.0.1/api/chatmessage?serviceid=4028b46f62d309c10162d30e7fcd0366",function(data){
+						console.log(data);
+					});
+				},
+				agentStatus:function(){
+					var param = 'status=ready';
+					$.ajax({
+						type: "PUT",
+						url:"http://uk.ukewo.cn:880/api/servicequene" , 
+						data: param,
+						success: function (data) {
+							console.log(data);
+						}
+					});
+				},
+			}
+			$(document).ready(function(){
+				demo.login();
+			});
+		</script>
+	</head>
+    
+    <body>
+		<a href="javascript:void(0)" onclick="demo.getUser('admin')">获取当前登录用户信息</a>
+
+		<a href="javascript:void(0)" onclick="demo.createWorkOrder()">创建工单</a>
+
+		<a href="javascript:void(0)" onclick="demo.createContacts()">创建联系人</a>
+
+		<a href="javascript:void(0)" onclick="demo.qualityList()">获取质检列表</a>
+
+
+		<a href="javascript:void(0)" onclick="demo.leavemsgList()">获取留言列表</a>
+
+		<a href="javascript:void(0)" onclick="demo.chatMsgList()">获取对话内容列表</a>
+
+
+		<a href="javascript:void(0)" onclick="demo.agentStatus()">坐席状态</a>
+		<div id="temp"></div>
+	</body>
+
+</html>
